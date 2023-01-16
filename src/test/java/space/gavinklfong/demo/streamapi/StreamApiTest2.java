@@ -42,18 +42,32 @@ public class StreamApiTest2 {
 	@Test
 	@DisplayName("Obtain a list of product with category = \"Books\" and price > 100")
 	public void exercise1() {
+		productRepo.findAll().stream()
+			.filter(p-> p.getPrice() > 100D && p.getCategory().equalsIgnoreCase("Books"))
+			.collect(Collectors.toList())
+			.forEach(System.out::println);
 		
 	}
 
 	@Test
 	@DisplayName("Obtain a list of product with category = \"Books\" and price > 100 (using Predicate chaining for filter)")
 	public void exercise1a() {
-		
+		Predicate<Product> filterCategoryBook = p -> p.getCategory().equalsIgnoreCase("Books");
+		Predicate<Product> filterPrice = p -> p.getPrice() > 100;
+		productRepo.findAll().stream()
+			.filter(p -> filterCategoryBook.and(filterPrice).test(p))
+			.collect(Collectors.toList())
+			.forEach(System.out::println);
 	}
 
 	@Test
 	@DisplayName("Obtain a list of product with category = \"Books\" and price > 100 (using BiPredicate for filter)")
 	public void exercise1b() {
+		BiPredicate<String, Double> biPredicate = (cat, price) -> cat.equalsIgnoreCase("Books") && price > 100;
+		productRepo.findAll().stream()
+		.filter(p -> biPredicate.test(p.getCategory(), p.getPrice()))
+		.collect(Collectors.toList())
+		.forEach(System.out::println);
 		
 	}
 
